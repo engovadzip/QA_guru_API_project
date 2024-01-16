@@ -14,10 +14,10 @@ def load_schema(filepath):
         return schema
 
 
-def user(username, password):
+def user(username, passw):
     info = {
         "username": f"{username}",
-        "password": f"{password}"
+        "password": f"{passw}"
     }
 
     return info
@@ -30,11 +30,11 @@ def attachment(response):
                   extension="txt")
 
 
-def get_token(BASE_URL):
+def get_token(link, user_name, password):
     token_schema = load_schema('get_token.json')
 
     with allure.step("Отправка запроса на получение токена"):
-        response = requests.post(url=BASE_URL + URL.create_token, data=user("admin", "password123"))
+        response = requests.post(url=link + URL.token_url, data=user(user_name, password))
 
     with allure.step("Проверка корректности запроса"):
         assert response.status_code == 200
@@ -45,11 +45,15 @@ def get_token(BASE_URL):
     attachment(response)
 
     token = response.json()["token"]
+
+    assert token is not None
+    assert token != ''
+
     return token
 
 
 def get_random_booking_id(BASE_URL):
-    response = requests.get(url=BASE_URL + URL.get_bookings)
+    response = requests.get(url=BASE_URL + URL.booking_url)
     booking_schema = load_schema('get_bookings.json')
 
     with allure.step("Проверка корректности запроса"):
@@ -70,6 +74,6 @@ def get_random_booking_id(BASE_URL):
 
 
 class URL:
-    create_token = 'auth/'
+    token_url = 'auth/'
 
-    get_bookings = 'booking/'
+    booking_url = 'booking/'
