@@ -95,8 +95,13 @@ Open any downloaded project's file in PyCharm (right click on file -> Edit with 
     <img src="resources/pycharm_project.png"/>
 </p>
 
-Click on **Open in Project**.  
-Open terminal in the opened PyCharm window by clicking on terminal button. The button locates at the bottom of the left sidebar as shown in the following figure:
+Click on **Open in Project**. After that there will be a following window:  
+<p align="center">
+    <img src="resources/trust_project.png"/>
+</p>
+
+Click on **Trust Project**.  
+Open a terminal in the opened PyCharm window by clicking on terminal button. The button locates at the bottom of the left sidebar as shown in the following figure:
 <p align="center">
     <img src="resources/terminal.png"/>
 </p>
