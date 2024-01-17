@@ -24,9 +24,6 @@
     <a href="https://www.jenkins.io/">
         <img src="resources/jenkins-original.svg" height="40" width="40" />
     </a>
-    <a href="https://aerokube.com/selenoid/">
-        <img src="resources/aerokube_logo.svg" height="40" width="40" />
-    </a>
     <a href="https://allurereport.org/">
         <img src="resources/allure-report-logo.svg" height="40" width="40" />
     </a>
