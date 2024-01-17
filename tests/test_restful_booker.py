@@ -4,6 +4,7 @@ import jsonschema
 from utils.utils import attachment, load_schema, get_token, get_random_booking_id, URL
 from allure_commons.types import AttachmentType
 import json
+import logging
 
 
 @allure.story("Получение токена для возможности редактирования бронирования")
@@ -25,6 +26,10 @@ def test_get_bookings(base_URL):
 
     attachment(response)
 
+    logging.info(response.request.url)
+    logging.info(response.status_code)
+    logging.info(response.text)
+
 
 @allure.story("Получение информации о бронировании")
 def test_get_booking_info(base_URL):
@@ -41,6 +46,10 @@ def test_get_booking_info(base_URL):
         jsonschema.validate(response.json(), booking_info_schema)
 
     attachment(response)
+
+    logging.info(response.request.url)
+    logging.info(response.status_code)
+    logging.info(response.text)
 
 
 @allure.story("Полное изменение информации о бронировании")
@@ -59,6 +68,10 @@ def test_update_booking_info(base_URL, booking_info, user_name, password):
         with allure.step("Валидация .json ответа"):
             booking_info_schema = load_schema('get_booking_info.json')
             jsonschema.validate(response.json(), booking_info_schema)
+
+        logging.info(response.request.url)
+        logging.info(response.status_code)
+        logging.info(response.text)
 
     update_response = requests.put(url=base_URL + URL.booking_url + booking_id, json=booking_info,
                                    headers={"Cookie": f"token={token}"})
@@ -83,6 +96,10 @@ def test_update_booking_info(base_URL, booking_info, user_name, password):
         with allure.step("Проверка соответствия информации в бронировании"):
             assert booking_info == upd_response.json()
 
+        logging.info(update_response.request.url)
+        logging.info(update_response.status_code)
+        logging.info(update_response.text)
+
     allure.attach(body=json.dumps(response.json(), indent=4, ensure_ascii=True), name="Response before update",
                   attachment_type=AttachmentType.JSON, extension="json")
     allure.attach(body=json.dumps(upd_response.json(), indent=4, ensure_ascii=True), name="Response after update",
@@ -100,6 +117,10 @@ def test_create_booking(base_URL, booking_info):
         with allure.step("Валидация .json ответа"):
             booking_info_schema = load_schema('post_booking.json')
             jsonschema.validate(response.json(), booking_info_schema)
+
+        logging.info(response.request.url)
+        logging.info(response.status_code)
+        logging.info(response.text)
 
     with allure.step("Получение id созданного бронирования"):
         booking_id = str(response.json()['bookingid'])
@@ -119,6 +140,10 @@ def test_create_booking(base_URL, booking_info):
 
         with allure.step("Проверка соответствия информации в созданном бронировании"):
             assert booking_info == upd_response.json()
+
+        logging.info(upd_response.request.url)
+        logging.info(upd_response.status_code)
+        logging.info(upd_response.text)
 
     allure.attach(body=json.dumps(response.json(), indent=4, ensure_ascii=True), name="Created booking response",
                   attachment_type=AttachmentType.JSON, extension="json")
@@ -142,6 +167,10 @@ def test_delete_booking(base_URL, booking_info, user_name, password):
         with allure.step("Валидация .json ответа"):
             booking_info_schema = load_schema('get_booking_info.json')
             jsonschema.validate(response.json(), booking_info_schema)
+
+        logging.info(response.request.url)
+        logging.info(response.status_code)
+        logging.info(response.text)
 
     delete_response = requests.delete(url=base_URL + URL.booking_url + booking_id, json=booking_info,
                                       headers={"Cookie": f"token={token}"})

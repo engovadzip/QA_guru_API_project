@@ -1,5 +1,6 @@
 from allure_commons.types import AttachmentType
 from random import randint
+import logging
 
 import json
 import os
@@ -48,6 +49,10 @@ def get_token(link, user_name, password):
 
     assert token is not None
     assert token != ''
+
+    logging.info(response.request.url)
+    logging.info(response.status_code)
+    logging.info(response.text)
 
     return token
 
