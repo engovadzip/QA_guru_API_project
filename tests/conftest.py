@@ -2,9 +2,11 @@ import os
 import pytest
 from dotenv import load_dotenv
 
+
 @pytest.fixture(scope='session', autouse=True)
 def load_env():
     load_dotenv()
+
 
 @pytest.fixture(scope='function')
 def booking_info():
@@ -22,15 +24,18 @@ def booking_info():
     }
     return info
 
+
 @pytest.fixture(scope='function')
 def base_URL():
     URL = os.getenv('BASE_URL')
     return URL
 
+
 @pytest.fixture(scope='function')
 def user_name():
     username = os.getenv('USER')
     return username
+
 
 @pytest.fixture(scope='function')
 def password():

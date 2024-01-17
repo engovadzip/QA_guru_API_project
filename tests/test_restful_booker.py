@@ -125,6 +125,7 @@ def test_create_booking(base_URL, booking_info):
     allure.attach(body=json.dumps(upd_response.json(), indent=4, ensure_ascii=True),
                   name=f"Response by booking ID {booking_id}", attachment_type=AttachmentType.JSON, extension="json")
 
+
 @allure.story("Удаление случайного бронирования")
 def test_delete_booking(base_URL, booking_info, user_name, password):
     with allure.step("Получение токена для возможности редактирования бронирования"):
@@ -143,7 +144,7 @@ def test_delete_booking(base_URL, booking_info, user_name, password):
             jsonschema.validate(response.json(), booking_info_schema)
 
     delete_response = requests.delete(url=base_URL + URL.booking_url + booking_id, json=booking_info,
-                                   headers={"Cookie": f"token={token}"})
+                                      headers={"Cookie": f"token={token}"})
 
     with allure.step("Проверка ответа запроса"):
         assert delete_response.status_code == 201
