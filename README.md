@@ -86,7 +86,7 @@ PASSWORD=""
 ```
 
 Fill ```FIRSTNAME```, ```LASTNAME```, ```TOTALPRICE```, ```DEPOSITPAID```, ```CHECKIN```, ```LASTNAME```, ```CHECKOUT```, ```ADDITIONALNEEDS``` in quotes as described [here](https://restful-booker.herokuapp.com/apidoc/index.html#api-Booking-CreateBooking) in **Request body** title.  
-Fill ```USER``` with username and ```PASSWORD``` with password as described [here](https://restful-booker.herokuapp.com/apidoc/index.html#api-Auth-CreateToken) in **Request body** title.  
+Fill ```USER``` with username and ```PASSWORD``` with password in quotes as described [here](https://restful-booker.herokuapp.com/apidoc/index.html#api-Auth-CreateToken) in **Request body** title.  
 
 #### Launch
 
