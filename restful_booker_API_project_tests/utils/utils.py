@@ -1,4 +1,5 @@
 from allure_commons.types import AttachmentType
+from tests.conftest import token_url, booking_url
 from pathlib import Path
 from random import randint
 import logging
@@ -6,9 +7,6 @@ import json
 import allure
 import requests
 import jsonschema
-
-token_url = 'auth/'
-booking_url = 'booking/'
 
 
 def path(schema_name):

@@ -3,6 +3,9 @@ import pytest
 from dotenv import load_dotenv, find_dotenv
 
 
+token_url = 'auth/'
+booking_url = 'booking/'
+
 @pytest.fixture(scope='session', autouse=True)
 def load_env():
     find_dotenv()
