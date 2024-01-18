@@ -1,8 +1,8 @@
 import allure
 import requests
 import jsonschema
-from ..resrful_booker_API_project_tests.utils.utils import load_schema, get_token, get_random_booking_id
-from ..resrful_booker_API_project_tests.utils.api_methods import (create_booking, delete_booking, get_booikngs,
+from ..restful_booker_API_project_tests.utils.utils import load_schema, get_token, get_random_booking_id
+from ..restful_booker_API_project_tests.utils.api_methods import (create_booking, delete_booking, get_booikngs,
                                                                   get_booikng_info, update_booikng)
 from allure_commons.types import AttachmentType
 import json
