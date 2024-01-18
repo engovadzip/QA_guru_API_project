@@ -1,10 +1,11 @@
 import os
 import pytest
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 
 @pytest.fixture(scope='session', autouse=True)
 def load_env():
+    find_dotenv()
     load_dotenv()
 
 
@@ -26,7 +27,7 @@ def booking_info():
 
 
 @pytest.fixture(scope='function')
-def base_URL():
+def base_url():
     URL = os.getenv('BASE_URL')
     return URL
 

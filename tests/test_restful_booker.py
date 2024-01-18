@@ -1,21 +1,28 @@
 import allure
 import requests
 import jsonschema
-from utils.utils import attachment, load_schema, get_token, get_random_booking_id, URL
+from ..resrful_booker_API_project_tests.utils.utils import load_schema, get_token, get_random_booking_id
+from ..resrful_booker_API_project_tests.utils.api_methods import (create_booking, delete_booking, get_booikngs,
+                                                                  get_booikng_info, update_booikng)
 from allure_commons.types import AttachmentType
 import json
 import logging
 
+token_url = 'auth/'
+booking_url = 'booking/'
+
 
 @allure.story("Получение токена для возможности редактирования бронирования")
-def test_create_token(base_URL, user_name, password):
-    get_token(base_URL, user_name, password)
+def test_create_token(base_url, user_name, password):
+    get_token(base_url, user_name, password)
 
 
 @allure.story("Получение списка с id бронирований")
-def test_get_bookings(base_URL):
+def test_get_bookings(base_url):
     booking_schema = load_schema('get_bookings.json')
-    response = requests.get(url=base_URL + URL.booking_url)
+
+    with allure.step("Получение списка с id бронирований"):
+        response = get_booikngs(base_url)
 
     with allure.step("Проверка ответа запроса"):
         assert response.status_code == 200
@@ -24,19 +31,14 @@ def test_get_bookings(base_URL):
         booking_response = response.json()[0]
         jsonschema.validate(booking_response, booking_schema)
 
-    attachment(response)
-
-    logging.info(response.request.url)
-    logging.info(response.status_code)
-    logging.info(response.text)
-
 
 @allure.story("Получение информации о бронировании")
-def test_get_booking_info(base_URL):
+def test_get_booking_info(base_url):
     with allure.step("Получение id одного из случайных бронирований"):
-        booking_id = str(get_random_booking_id(base_URL))
+        booking_id = str(get_random_booking_id(base_url))
 
-    response = requests.get(url=base_URL + URL.booking_url + booking_id)
+    with allure.step(f"Получение информации о бронировании {booking_id}"):
+        response = get_booikng_info(base_url, booking_id)
 
     with allure.step("Проверка ответа запроса"):
         assert response.status_code == 200
@@ -45,22 +47,16 @@ def test_get_booking_info(base_URL):
         booking_info_schema = load_schema('get_booking_info.json')
         jsonschema.validate(response.json(), booking_info_schema)
 
-    attachment(response)
-
-    logging.info(response.request.url)
-    logging.info(response.status_code)
-    logging.info(response.text)
-
 
 @allure.story("Полное изменение информации о бронировании")
-def test_update_booking_info(base_URL, booking_info, user_name, password):
+def test_update_booking_info(base_url, booking_info, user_name, password):
     with allure.step("Получение токена для возможности редактирования бронирования"):
-        token = get_token(base_URL, user_name, password)
+        token = get_token(base_url, user_name, password)
 
     with allure.step("Получение id одного из случайных бронирований"):
-        booking_id = str(get_random_booking_id(base_URL))
+        booking_id = str(get_random_booking_id(base_url))
 
-        response = requests.get(url=base_URL + URL.booking_url + booking_id)
+        response = get_booikng_info(base_url, booking_id)
 
         with allure.step("Проверка ответа запроса"):
             assert response.status_code == 200
@@ -69,12 +65,8 @@ def test_update_booking_info(base_URL, booking_info, user_name, password):
             booking_info_schema = load_schema('get_booking_info.json')
             jsonschema.validate(response.json(), booking_info_schema)
 
-        logging.info(response.request.url)
-        logging.info(response.status_code)
-        logging.info(response.text)
-
-    update_response = requests.put(url=base_URL + URL.booking_url + booking_id, json=booking_info,
-                                   headers={"Cookie": f"token={token}"})
+    with allure.step(f"Обновление информации в бронировании {booking_id}"):
+        update_response = update_booikng(base_url, booking_id, booking_info, token)
 
     with allure.step("Проверка ответа запроса"):
         assert update_response.status_code == 200
@@ -84,7 +76,7 @@ def test_update_booking_info(base_URL, booking_info, user_name, password):
         jsonschema.validate(update_response.json(), upd_booking_info_schema)
 
     with allure.step("Получение информации об обновленном бронировании"):
-        upd_response = requests.get(url=base_URL + URL.booking_url + booking_id)
+        upd_response = get_booikng_info(base_url, booking_id)
 
         with allure.step("Проверка ответа запроса"):
             assert update_response.status_code == 200
@@ -96,20 +88,11 @@ def test_update_booking_info(base_URL, booking_info, user_name, password):
         with allure.step("Проверка соответствия информации в бронировании"):
             assert booking_info == upd_response.json()
 
-        logging.info(update_response.request.url)
-        logging.info(update_response.status_code)
-        logging.info(update_response.text)
-
-    allure.attach(body=json.dumps(response.json(), indent=4, ensure_ascii=True), name="Response before update",
-                  attachment_type=AttachmentType.JSON, extension="json")
-    allure.attach(body=json.dumps(upd_response.json(), indent=4, ensure_ascii=True), name="Response after update",
-                  attachment_type=AttachmentType.JSON, extension="json")
-
 
 @allure.story("Создание нового бронирования")
-def test_create_booking(base_URL, booking_info):
+def test_create_booking(base_url, booking_info):
     with allure.step("Отправка запроса с данными о новом бронировании"):
-        response = requests.post(url=base_URL + URL.booking_url, json=booking_info)
+        response = create_booking(base_url, booking_info)
 
         with allure.step("Проверка ответа запроса"):
             assert response.status_code == 200
@@ -118,18 +101,11 @@ def test_create_booking(base_URL, booking_info):
             booking_info_schema = load_schema('post_booking.json')
             jsonschema.validate(response.json(), booking_info_schema)
 
-        logging.info(response.request.url)
-        logging.info(response.status_code)
-        logging.info(response.text)
-
     with allure.step("Получение id созданного бронирования"):
         booking_id = str(response.json()['bookingid'])
 
-        allure.attach(body=str(booking_id), name="Booking ID", attachment_type=AttachmentType.TEXT,
-                      extension="txt")
-
     with allure.step("Получение информации о созданном бронировании"):
-        upd_response = requests.get(url=base_URL + URL.booking_url + booking_id)
+        upd_response = get_booikng_info(base_url, booking_id)
 
         with allure.step("Проверка ответа запроса"):
             assert upd_response.status_code == 200
@@ -141,25 +117,16 @@ def test_create_booking(base_URL, booking_info):
         with allure.step("Проверка соответствия информации в созданном бронировании"):
             assert booking_info == upd_response.json()
 
-        logging.info(upd_response.request.url)
-        logging.info(upd_response.status_code)
-        logging.info(upd_response.text)
-
-    allure.attach(body=json.dumps(response.json(), indent=4, ensure_ascii=True), name="Created booking response",
-                  attachment_type=AttachmentType.JSON, extension="json")
-    allure.attach(body=json.dumps(upd_response.json(), indent=4, ensure_ascii=True),
-                  name=f"Response by booking ID {booking_id}", attachment_type=AttachmentType.JSON, extension="json")
-
 
 @allure.story("Удаление случайного бронирования")
-def test_delete_booking(base_URL, booking_info, user_name, password):
+def test_delete_booking(base_url, user_name, password):
     with allure.step("Получение токена для возможности редактирования бронирования"):
-        token = get_token(base_URL, user_name, password)
+        token = get_token(base_url, user_name, password)
 
     with allure.step("Получение id одного из случайных бронирований"):
-        booking_id = str(get_random_booking_id(base_URL))
+        booking_id = str(get_random_booking_id(base_url))
 
-        response = requests.get(url=base_URL + URL.booking_url + booking_id)
+        response = get_booikng_info(base_url, booking_id)
 
         with allure.step("Проверка ответа запроса"):
             assert response.status_code == 200
@@ -168,17 +135,8 @@ def test_delete_booking(base_URL, booking_info, user_name, password):
             booking_info_schema = load_schema('get_booking_info.json')
             jsonschema.validate(response.json(), booking_info_schema)
 
-        logging.info(response.request.url)
-        logging.info(response.status_code)
-        logging.info(response.text)
-
-    delete_response = requests.delete(url=base_URL + URL.booking_url + booking_id, json=booking_info,
-                                      headers={"Cookie": f"token={token}"})
+    with allure.step(f"Удаление бронирования {booking_id}"):
+        delete_response = delete_booking(base_url, booking_id, token)
 
     with allure.step("Проверка ответа запроса"):
         assert delete_response.status_code == 201
-
-    allure.attach(body=str(delete_response.status_code), name="Booking delete response status code",
-                  attachment_type=AttachmentType.TEXT, extension="txt")
-    allure.attach(body=delete_response.content, name="Booking delete response content",
-                  attachment_type=AttachmentType.TEXT, extension="txt")
