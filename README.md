@@ -1,4 +1,4 @@
-<h1 align="center">API TESTING PROJECT</h1>  
+<h1 align="center">RESTFUL BOOKER API TESTING PROJECT</h1>  
 <p align="center">
     <img src="resources/happy-cat.gif" height="100" />
 </p>
