@@ -33,22 +33,21 @@ def get_token(link, user_name, password):
 
     with allure.step("Отправка запроса на получение токена"):
         response = requests.post(url=link + token_url, data=user(user_name, password))
+        allure.attach(body=response.request.url, name="Request URL", attachment_type=AttachmentType.TEXT)
+        allure.attach(body=response.request.method, name="Request method", attachment_type=AttachmentType.TEXT)
+        allure.attach(body=str(response.status_code), name="Response status code", attachment_type=AttachmentType.TEXT,
+                      extension='txt')
+        allure.attach(body=json.dumps(response.json(), indent=4, ensure_ascii=True), name="Response body",
+                  attachment_type=AttachmentType.JSON, extension="json")
+        logging.info("Request: " + response.request.url)
+        logging.info("Response code " + str(response.status_code))
+        logging.info("Response: " + response.text)
 
     with allure.step("Проверка корректности запроса"):
         assert response.status_code == 200
 
     with allure.step("Валидация .json ответа"):
         jsonschema.validate(response.json(), token_schema)
-
-    allure.attach(body=response.request.url, name="Request URL", attachment_type=AttachmentType.TEXT)
-    allure.attach(body=response.request.method, name="Request method", attachment_type=AttachmentType.TEXT)
-    allure.attach(body=str(response.status_code), name="Response status code", attachment_type=AttachmentType.TEXT,
-                  extension='txt')
-    allure.attach(body=json.dumps(response.json(), indent=4, ensure_ascii=True), name="Response body",
-                  attachment_type=AttachmentType.JSON, extension="json")
-    logging.info("Request: " + response.request.url)
-    logging.info("Response code " + str(response.status_code))
-    logging.info("Response: " + response.text)
 
     token = response.json()["token"]
 
